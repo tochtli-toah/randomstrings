@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="es-MX">
+<head>
+	<title>sin título</title>
+	<meta charset="UTF-8" />
+	<style>
+	input {
+		display: block;
+	}
+	
+	button {
+		display: block;
+		margin-top: 1.5em;
+	}
+	
+	label {
+		color: navy;
+		display: block;
+		font-weight: bold;
+		margin-top: 1.5em;
+	}
+	
+	span {
+		display: block;
+	}
+	
+	.error {
+		color: red;
+		font-weight: bold;
+	}
+	
+	#resultados {
+		padding: 1.5em;
+	}
+	
+	#resultados span {
+		font-family: monospace;
+	}
+	</style>
+</head>
+
+<body>
+	<h1>Generador de cadenas aleatorias</h1>
+	<p>Para genera strings aleatorios es necesario:</p>
+	<ol>
+		<li>Llenar el campo universo con los caracteres que se desea emplear en las cadenas (por defecto trae todas las 52 letras y 10 números)</li>
+		<li>Indicar la longitud que debe tener cada cadena</li>
+		<li>Indicar cuantos strings se requiere obtener</li>
+		<li>Dar clic en generar para obtener los strings solicitados</li>
+	</ol>
+	<p>El sistema hará algunas validaciones como:</p>
+	<ul>
+		<li>Que el universo no esté vacío</li>
+		<li>Que se puedan generar tantos strings como se requiere (si el universo es pequeño la cantidad de strings es limitada)</li>
+		<!-- <li>Que todos los strings generados sean diferentes entre sí</li> -->
+	</ul>
+	
+	<div id="formato"> 
+		<label for="universo" >Universo:</label> <input type="text" id="universo" size="90" value="aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ1234567890" /> <span class="error" id="universo_error">Es necesario ingresar los caracteres a emplear</span>
+		<label for="longitud" >Longitud de cadenas:</label> <input type="text" id="longitud" value="" /> <span class="error" id="longitud_error">La longitud debe ser ingresada</span>
+		<label for="cantidad" >Cantidad:</label> <input type="text" id="cantidad" value="" /> <span class="error" id="cantidad_error">Es necesario indicar la cantidad de cadenas a generar</span>
+		<button id="generador">Generar</button>
+	</div>
+	<div id="resultados">
+	</div>
+		<script type="text/javascript">
+		
+		var generador = document.getElementById("generador");
+		
+		var ocultaErrores = function(){
+			var novisibles = document.getElementsByClassName("error");
+			for (var k = 0, len = novisibles.length ; k < len; k++) {
+				novisibles[k].style.display = "none";
+			}
+		};
+		
+		ocultaErrores();
+		
+		generador.onclick = function(e){
+			var universo = document.getElementById("universo").value;
+			var longitud = document.getElementById("longitud").value;
+			var longitud = +longitud;
+			var cantidad = document.getElementById("cantidad").value;
+			var cantidad = +cantidad;
+			var longituduniverso = universo.length;
+			var valido = false;
+			var limit = 1;
+			
+			ocultaErrores();
+			
+			//el universo está poblado
+			if(longituduniverso === 0){
+				document.getElementById("universo_error").style.display = "block";
+				return false;
+			}
+			if(longitud === 0){
+				document.getElementById("longitud_error").style.display = "block";
+				return false;
+			}
+			if(cantidad === 0){
+				document.getElementById("cantidad_error").style.display = "block";
+				return false;
+			}
+			
+			// verificar si es válida a cantidad de strings solicitados
+			for (var i = longituduniverso+1; i-- ; i > cantidad){
+				limit *= i;
+				if(limit > cantidad){
+					valido = true;
+					break;
+				}
+			}
+			
+			if(valido !== true){
+				alert ('la cantidad NO es posible de ser generada');
+				return false;
+			}
+			
+			var crops = [];
+			
+			while( crops.length < cantidad ){
+				var cadena = '';
+				for (var i=0 ; i < longitud ; i++ ){
+					cadena += universo[Math.floor(Math.random()*longituduniverso)];
+				}
+				crops.push(cadena);
+			}
+			
+			var contenedor = document.getElementById("resultados");
+			
+			contenedor.innerHTML = "";
+			var Salto = document.createElement('br');
+			for (var k = 0, len = crops.length ; k < len; k++) {
+				var nuevaCadena = document.createElement('span');
+				nuevaCadena.appendChild(document.createTextNode(crops[k]));
+				contenedor.appendChild(nuevaCadena);
+                contenedor.appendChild(Salto);
+			}
+		};
+		
+		
+	</script>
+</body>
+
+</html>
